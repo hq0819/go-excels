@@ -77,10 +77,13 @@ func DoWrite(sourceUrl string, targetUrl string, obj any) {
 		for rows.Next() {
 			columns, _ := rows.Columns()
 			for colIndex, val := range columns {
+				prefix := "no-prefix"
 				if strings.Contains(val, `${fe`) {
 					split := strings.Split(val, " ")
 					nv := strings.Split(split[1], ":")
-					loopData[nv[0]] = loopDataInfo{rowIndex, nv[1]}
+					s2 := nv[0]
+					prefix = s2 + "."
+					loopData[s2] = loopDataInfo{rowIndex, nv[1]}
 					pos, err := excelize.CoordinatesToCellName(colIndex+1, rowIndex)
 					if err != nil {
 						log.Fatal("get cell position error")
@@ -97,6 +100,21 @@ func DoWrite(sourceUrl string, targetUrl string, obj any) {
 					}
 					split := strings.Split(val, " ")
 					err = reader.SetCellStr(s, pos, "${"+split[0]+"}")
+					if err != nil {
+						log.Fatalf("set value error : %v", val)
+					}
+				}
+				if strings.HasPrefix(val, prefix) {
+					pos, err := excelize.CoordinatesToCellName(colIndex+1, rowIndex)
+					if err != nil {
+						log.Fatal("get cell position error")
+					}
+					cellValue, err := reader.GetCellValue(s, pos)
+					if err != nil {
+						log.Fatal("get cell value error")
+					}
+
+					err = reader.SetCellStr(s, pos, "${"+cellValue+"}")
 					if err != nil {
 						log.Fatalf("set value error : %v", val)
 					}
