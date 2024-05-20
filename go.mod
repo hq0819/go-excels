@@ -1,4 +1,4 @@
-module prictice
+module excelTemplate
 
 go 1.21.0
 
