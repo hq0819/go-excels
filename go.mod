@@ -1,4 +1,4 @@
-module github.com/hq0819/go-excels/v1.0
+module github.com/hq0819/go-excels
 
 go 1.21.0
 
