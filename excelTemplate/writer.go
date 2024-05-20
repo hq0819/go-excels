@@ -76,8 +76,8 @@ func DoWrite(sourceUrl string, targetUrl string, obj any) {
 		rowIndex := 1
 		for rows.Next() {
 			columns, _ := rows.Columns()
+			prefix := "no-prefix"
 			for colIndex, val := range columns {
-				prefix := "no-prefix"
 				if strings.Contains(val, `${fe`) {
 					split := strings.Split(val, " ")
 					nv := strings.Split(split[1], ":")
