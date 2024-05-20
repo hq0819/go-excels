@@ -23,8 +23,26 @@ var handle = map[reflect.Kind]func(sheet string, reader *excelize.File, position
 			log.Fatalf("set value error : %v", val)
 		}
 	},
+	reflect.Int32: func(sheet string, reader *excelize.File, position string, val reflect.Value) {
+		err := reader.SetCellInt(sheet, position, int(val.Int()))
+		if err != nil {
+			log.Fatalf("set value error : %v", val)
+		}
+	},
+	reflect.Int64: func(sheet string, reader *excelize.File, position string, val reflect.Value) {
+		err := reader.SetCellInt(sheet, position, int(val.Int()))
+		if err != nil {
+			log.Fatalf("set value error : %v", val)
+		}
+	},
 
 	reflect.Float64: func(sheet string, reader *excelize.File, position string, val reflect.Value) {
+		err := reader.SetCellFloat(sheet, position, val.Float(), 2, 64)
+		if err != nil {
+			log.Fatalf("set value error : %v", val)
+		}
+	},
+	reflect.Float32: func(sheet string, reader *excelize.File, position string, val reflect.Value) {
 		err := reader.SetCellFloat(sheet, position, val.Float(), 2, 64)
 		if err != nil {
 			log.Fatalf("set value error : %v", val)
@@ -67,9 +85,8 @@ func DoWrite(sourceUrl string, targetUrl string, obj any) {
 					if err != nil {
 						log.Fatal("get cell position error")
 					}
-
+					err = reader.SetCellStr(s, pos, "${"+split[len(split)-1]+"}")
 					if err != nil {
-						err = reader.SetCellStr(s, pos, "${"+split[len(split)-1]+"}")
 						log.Fatalf("set value error : %v", val)
 					}
 				}
